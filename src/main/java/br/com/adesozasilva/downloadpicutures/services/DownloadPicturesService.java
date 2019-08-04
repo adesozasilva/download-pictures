@@ -29,7 +29,6 @@ public class DownloadPicturesService {
 			pathname = pathToSave + File.separator + "download" + getFileExtension(url);
 			File file = new File(pathname);
 			outputStream = new FileOutputStream(file);
-			System.out.println(file.getAbsolutePath());
 			while ((read = inputStream.read(bytes)) != -1) {
 				outputStream.write(bytes, 0, read);
 			}
