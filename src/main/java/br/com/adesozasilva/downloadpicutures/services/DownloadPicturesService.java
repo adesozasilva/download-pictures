@@ -1,4 +1,4 @@
-package br.com.adesozasilva.downloadpictures;
+package br.com.adesozasilva.downloadpicutures.services;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,11 +9,13 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class PegarFotos {
+import org.springframework.stereotype.Service;
 
-	private static final String pathToSave = "C:\\Users\\asouzsil\\IdeaProjects\\download-pictures\\src\\main\\resources\\pictures";
+@Service
+public class DownloadPicturesService {
 
-	public static void get(String url, String fileName) throws Exception {
+	public String download(String url, String pathToSave) throws Exception {
+		String pathname = "";
 		URL urlObj = new URL(url);                                    
 		HttpURLConnection  httpConnection = (HttpURLConnection)urlObj.openConnection();
 		httpConnection.setRequestMethod("GET");
@@ -22,9 +24,10 @@ public class PegarFotos {
 		try {
 			int read = 0;
 			byte[] bytes = new byte[1024];
-			criaSenaoExisteApasta(pathToSave);
-			
-			File file = new File(pathToSave + File.separator + fileName);
+			createIfnotExistDir(pathToSave);
+
+			pathname = pathToSave + File.separator + "download" + getFileExtension(url);
+			File file = new File(pathname);
 			outputStream = new FileOutputStream(file);
 			System.out.println(file.getAbsolutePath());
 			while ((read = inputStream.read(bytes)) != -1) {
@@ -43,9 +46,18 @@ public class PegarFotos {
 				ex.printStackTrace();
 			}
 		}
+		return pathname;
+	}
+	
+	private String getFileExtension(String fileName) {
+		String extension =  "";
+		if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) {
+			extension = "."+fileName.substring(fileName.lastIndexOf(".")+1);
+		}
+		return extension;
 	}
 
-	private static void criaSenaoExisteApasta(String pathToSave) {
+	private static void createIfnotExistDir(String pathToSave) {
 		File file = new File(pathToSave);
 		if(!file.exists()) file.mkdir();
 	}
